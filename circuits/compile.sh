@@ -1,5 +1,5 @@
 
-circom ./i2f.circom --r1cs --sym --wasm
-cd i2f_js
-node generate_witness.js i2f.wasm ../input.json witness.wtns
+circom ./fmultiply.circom --r1cs --sym --wasm
+cd fmultiply_js
+node generate_witness.js fmultiply.wasm ../inputm.json witness.wtns
 cd ..

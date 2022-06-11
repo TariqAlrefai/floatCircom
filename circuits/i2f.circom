@@ -3,6 +3,11 @@ pragma circom 2.0.4;
 include "../circomlib/circuits/bitify.circom";
 include "../circomlib/circuits/gates.circom";
 
+// Priority Encoder
+// It is a well known circuit in Digital design, it returns the index of the first (most significant) high
+// bit in bits array
+// EX... 0b00110110 --> 5
+// EX... 0b01000001 --> 6 and so on...
 template pe(n){
     signal input integer;
     signal output o;
@@ -135,27 +140,27 @@ template pe(n){
 }
 
 template i2f(n){
-    signal input in;
-    signal input test;
-    signal output out;
+    signal input in;   // input integer
+    signal input test; // test input, should be removed in production
+    signal output out; // floating point number
 
+    // Get the integr exponent
     component p = pe(n);
     p.integer <== in;
     p.o === test; // Test output is correct, Exponent part should be ready here
     
     component exp = Num2Bits(8);
-    exp.in <== p.o+127;
+    exp.in <== p.o+127; // correct exponent form
 
+    // Set mantissa part of the floating point number
     var i;
-/////////
     component mantissa = Num2Bits(23);
-    var shift = 21-p.o;
+    var shift = 23-p.o;
     var shifted = in << shift;
-    mantissa.in <-- shifted;
-    
+    mantissa.in <-- shifted & 0x7fffff;
     
 
-////////
+    // combine both parts along with sing part (sign always positive right now)
     component f = Bits2Num(n);
     f.in[31] <== 0;
 
