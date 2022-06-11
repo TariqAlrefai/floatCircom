@@ -1,0 +1,96 @@
+if(exp == 1){
+	holder = 0;
+}
+if(exp == 2){
+	holder = 1;
+}
+if(exp == 4){
+	holder = 2;
+}
+if(exp == 8){
+	holder = 3;
+}
+if(exp == 16){
+	holder = 4;
+}
+if(exp == 32){
+	holder = 5;
+}
+if(exp == 64){
+	holder = 6;
+}
+if(exp == 128){
+	holder = 7;
+}
+if(exp == 256){
+	holder = 8;
+}
+if(exp == 512){
+	holder = 9;
+}
+if(exp == 1024){
+	holder = 10;
+}
+if(exp == 2048){
+	holder = 11;
+}
+if(exp == 4096){
+	holder = 12;
+}
+if(exp == 8192){
+	holder = 13;
+}
+if(exp == 16384){
+	holder = 14;
+}
+if(exp == 32768){
+	holder = 15;
+}
+if(exp == 65536){
+	holder = 16;
+}
+if(exp == 131072){
+	holder = 17;
+}
+if(exp == 262144){
+	holder = 18;
+}
+if(exp == 524288){
+	holder = 19;
+}
+if(exp == 1048576){
+	holder = 20;
+}
+if(exp == 2097152){
+	holder = 21;
+}
+if(exp == 4194304){
+	holder = 22;
+}
+if(exp == 8388608){
+	holder = 23;
+}
+if(exp == 16777216){
+	holder = 24;
+}
+if(exp == 33554432){
+	holder = 25;
+}
+if(exp == 67108864){
+	holder = 26;
+}
+if(exp == 134217728){
+	holder = 27;
+}
+if(exp == 268435456){
+	holder = 28;
+}
+if(exp == 536870912){
+	holder = 29;
+}
+if(exp == 1073741824){
+	holder = 30;
+}
+if(exp == 2147483648){
+	holder = 31;
+}
