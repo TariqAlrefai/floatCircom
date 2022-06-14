@@ -1,3 +1,10 @@
+/*
+    This moduel convert any 32-bit integer to floating point number
+
+    Note: I need to add zero support to this module
+    Note: I need to add negative support to this module
+*/
+
 pragma circom 2.0.4;
 
 include "../circomlib/circuits/bitify.circom";
@@ -19,7 +26,7 @@ template pe(n){
     var i;
     var j;
     var counter=0;
-    component ands[n];
+    component ands[n+1];
     var holder;
     
 
@@ -34,6 +41,11 @@ template pe(n){
 
         intout.in[j] <== ands[j].out;
     }
+
+    // ands[n] = MultiAND(n);
+    // for(j=0; j<n; j++){
+    //     ands[n].in[j] <== intin.out
+    // }
 
     // holder <== intout.out;
     var exp = intout.out;
@@ -141,13 +153,13 @@ template pe(n){
 
 template i2f(n){
     signal input in;   // input integer
-    signal input test; // test input, should be removed in production
+    // signal input test; // test input, should be removed in production
     signal output out; // floating point number
 
     // Get the integr exponent
     component p = pe(n);
     p.integer <== in;
-    p.o === test; // Test output is correct, Exponent part should be ready here
+    // p.o === test; // Test output is correct, Exponent part should be ready here
     
     component exp = Num2Bits(8);
     exp.in <== p.o+127; // correct exponent form
