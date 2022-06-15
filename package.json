@@ -1,0 +1,27 @@
+{
+  "name": "floatcircom",
+  "version": "1.0.0",
+  "description": "Floating point arithmetic implementation for circom",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ABADY1000/floatCircom.git"
+  },
+  "author": "AbdullahB",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ABADY1000/floatCircom/issues"
+  },
+  "homepage": "https://github.com/ABADY1000/floatCircom#readme",
+  "dependencies": {
+    "circom_tester": "^0.0.12",
+    "circomlib": "^2.0.3",
+    "circomlibjs": "^0.1.2"
+  }
+}

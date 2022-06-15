@@ -7,8 +7,8 @@
 
 pragma circom 2.0.4;
 
-include "../circomlib/circuits/bitify.circom";
-include "../circomlib/circuits/gates.circom";
+include "../node_modules/circomlib/circuits/bitify.circom";
+include "../node_modules/circomlib/circuits/gates.circom";
 
 // Priority Encoder
 // It is a well known circuit in Digital design, it returns the index of the first (most significant) high

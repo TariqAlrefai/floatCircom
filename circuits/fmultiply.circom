@@ -1,6 +1,6 @@
 
-include "../circomlib/circuits/bitify.circom";
-include "../circomlib/circuits/mux1.circom";
+include "../node_modules/circomlib/circuits/bitify.circom";
+include "../node_modules/circomlib/circuits/mux1.circom";
 
 template fmultiply(){
     signal input f1;
