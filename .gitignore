@@ -3,3 +3,4 @@ package-lock.json
 **/*.r1cs
 **/*.sym
 **/*_js
+**/*.wtns
