@@ -2,6 +2,7 @@ pragma circom 2.0.4;
 
 include "../node_modules/circomlib/circuits/bitify.circom";
 include "../node_modules/circomlib/circuits/mux1.circom";
+include "./logic.circom";
 
 template fmultiply(){
     signal input f1;
@@ -19,7 +20,8 @@ template fmultiply(){
     signal f1s <== f1b.out[31];
     signal f2s <== f2b.out[31];
 
-    // Extract Exponent
+    // Extract Exponent, calculate ANDs & ORs of each
+
     var i;
     component f1exp = Bits2Num(8);
     for(i=0; i<8; i++){
