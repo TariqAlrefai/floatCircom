@@ -23,14 +23,22 @@ template fmultiply(){
     // Extract Exponent, calculate ANDs & ORs of each
 
     var i;
-    component f1exp = Bits2Num(8);
+    component f1eAnd = MultiAND(8);
+    component f1eOr  = MultiOR(8);
+    component f1exp  = Bits2Num(8);
     for(i=0; i<8; i++){
-        f1exp.in[i] <== f1b.out[23+i];
+        f1eAnd.in[i] <== f1b.out[23+i];
+        f1eOr.in[i]  <== f1b.out[23+i];
+        f1exp.in[i]  <== f1b.out[23+i];
     }
 
-    component f2exp = Bits2Num(8);
+    component f2eAnd = MultiAND(8);
+    component f2eOr  = MultiOR(8);
+    component f2exp  = Bits2Num(8);
     for(i=0; i<8; i++){
-        f2exp.in[i] <== f2b.out[23+i];
+        f2eAnd.in[i] <== f1b.out[23+i];
+        f2eOr.in[i]  <== f1b.out[23+i];
+        f2exp.in[i]  <== f2b.out[23+i];
     }
 
     // Extract Mantissa
@@ -46,29 +54,45 @@ template fmultiply(){
         f2mant.in[i] <== f2b.out[i];
     }
 
-    // Multiply exponents part;
-    signal oexp;
-    oexp <== f1exp.out + f2exp.out - 127;
-
     // Multiply mantissas
     signal mant;
     mant <== f1mant.out * f2mant.out;
-    // log(f1mant.out);
-    // log(f2mant.out);
-    // log(mant);
-    component bits = Num2Bits(48);
 
+    component bits = Num2Bits(48);
     bits.in <== mant;
 
+    // Multiply exponents part 
+    // (if (&A)|(&B) then 0xff else if (|A)&(|B) then A+B-127 else 0)
+    signal oexp;
+    signal exp;
+    
+    // A+B-127
+    exp <== f1exp.out + f2exp.out - 127 + bits.out[47];
+    
+    // (|A)&(|B)
+    component and = AND();
+    and.a <== f1eOr.out;
+    and.b <== f2eOr.out;
+    
+    // if (|A)&(|B) then A+B-127 else 0
+    component mux_zero_exp = Mux1();
+    mux_zero_exp.c[0] <== 0x00;
+    mux_zero_exp.c[1] <== exp;
+    mux_zero_exp.s <== and.out;
+
+    // (&A)|(&B)
+    component or = OR();
+    or.a <== f1eAnd.out;
+    or.b <== f2eAnd.out;
+
+    // if (&A)|(&B) then 0xff else if (|A)&(|B) then A+B-127 else 0
+    component mux_inf_exp = Mux1();
+    mux_inf_exp.c[0] <== 0xff;
+    mux_inf_exp.c[1] <== mux_zero_exp.out;
+    mux_inf_exp.s <== or.out;
+    oexp <== mux_inf_exp.out;
+
     component of = Bits2Num(32);
-    var last = bits.out[47];
-    var base=22;
-    // if(last == 1){
-    //     base = 22;
-    // }
-    // else{
-    //     base = 21;
-    // }
     signal b[23];
     for(i=0;i<23;i++){
         b[i] <== bits.out[23+i];
