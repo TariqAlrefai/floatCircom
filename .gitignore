@@ -2,4 +2,4 @@ node_modules
 package-lock.json
 **/*.r1cs
 **/*.sym
-**/*.*_js
+**/*_js
