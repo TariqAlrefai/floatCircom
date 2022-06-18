@@ -10,10 +10,10 @@
     "test": "npx mocha",
     "i2fc": "bash ./scripts/compile.sh i2f",
     "i2fr": "bash ./scripts/run.sh i2f",
-    "i2f":  "npm run i2fc && npm run i2fr",
+    "i2f": "npm run i2fc && npm run i2fr",
     "fmulc": "bash ./scripts/compile.sh fmultiply",
     "fmulr": "bash ./scripts/run.sh fmultiply",
-    "fmul":  "npm run fmulc && npm run fmulr"
+    "fmul": "npm run fmulc && npm run fmulr"
   },
   "repository": {
     "type": "git",
@@ -29,5 +29,9 @@
     "circom_tester": "^0.0.12",
     "circomlib": "^2.0.3",
     "circomlibjs": "^0.1.2"
+  },
+  "devDependencies": {
+    "chai": "^4.3.6",
+    "mocha": "^10.0.0"
   }
 }
