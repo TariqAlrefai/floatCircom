@@ -35,7 +35,7 @@ def fadd(a: float, b: float):
 
     am = getFullMantissa(ab)
     bm = getFullMantissa(bb)
-    # print()
+    
     is_althb = ae < be
 
     smalle, greate = (ae,be) if is_althb else (be,ae)
@@ -48,19 +48,22 @@ def fadd(a: float, b: float):
     # print("{:>60}".format(bin(mam)))
     # print("{:>60}".format(bin(bm)))
     # print("{:>60}".format(bin(mbm)))
-
     m = mam + mbm
 
-    n = m + (greate << 23)
+    print(f'{hex(mam):>10}')
+    print(f'{hex(mbm):>10}')
+    print(f'{hex(m):>10}')
+
+    n = (m&0x7fffff) + (greate << 23)
 
     return n
 
 
     print(diff)
 
-r = fadd(2.5, 250)
+r = fadd(19.25, 1423555.78)
 rr = struct.unpack('f', bytearray([r&0xff, r&0xff00>>8, r&0xff0000>>16, r&0xff000000>>24]))
-print(r)
+print(f'{hex(r)}')
 print(rr)
 
 
