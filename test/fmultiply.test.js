@@ -10,8 +10,8 @@ async function tester(){
     const b = (new DataView(new ArrayBuffer(4)));
     b.setFloat32(0, 2.5);
 
-    const circuit = await wasm_tester("../circuits/fmultiply.circom");
-    console.log(a.getUint32(0));
+    const circuit = await wasm_tester("./circuits/fmultiply.circom");
+    console.log(`0x${a.getUint32(0).toString(16)}`);
     const w = await circuit.calculateWitness({f1: a.getUint32(0), f2: b.getUint32(0)});
     await circuit.checkConstraints(w);
     const result = w[0];
@@ -21,8 +21,8 @@ async function tester(){
 
     const c = (new DataView(new ArrayBuffer(8)));
     c.setBigInt64(0, output);
-    console.log(c);
     console.log(c.getFloat32(4));
+    
 
     
 }

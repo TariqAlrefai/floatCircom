@@ -7,7 +7,7 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "npx mocha",
     "i2fc": "bash ./scripts/compile.sh i2f",
     "i2fr": "bash ./scripts/run.sh i2f",
     "i2f":  "npm run i2fc && npm run i2fr",
