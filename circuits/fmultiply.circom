@@ -1,6 +1,7 @@
 pragma circom 2.0.4;
 
 include "../node_modules/circomlib/circuits/bitify.circom";
+include "../node_modules/circomlib/circuits/gates.circom";
 include "../node_modules/circomlib/circuits/mux1.circom";
 include "./logic.circom";
 
@@ -19,9 +20,12 @@ template fmultiply(){
     // Extract Sign
     signal f1s <== f1b.out[31];
     signal f2s <== f2b.out[31];
+    component xor = XOR();
+    xor.a <== f1s;
+    xor.b <== f2s;
+    signal s <== xor.out;
 
     // Extract Exponent, calculate ANDs & ORs of each
-
     var i;
     component f1eAnd = MultiAND(8);
     component f1eOr  = MultiOR(8);
@@ -45,7 +49,7 @@ template fmultiply(){
     component f1mant = Bits2Num(24);
     f1mant.in[23] <== 1;
     for(i=0; i<23; i++){
-        f1mant.in[i] <== f2b.out[i];
+        f1mant.in[i] <== f1b.out[i];
     }
 
     component f2mant = Bits2Num(24);
@@ -57,6 +61,9 @@ template fmultiply(){
     // Multiply mantissas
     signal mant;
     mant <== f1mant.out * f2mant.out;
+    log(f1mant.out);
+    log(f2mant.out);
+    log(mant);
 
     component bits = Num2Bits(48);
     bits.in <== mant;
@@ -76,8 +83,8 @@ template fmultiply(){
     
     // if (|A)&(|B) then A+B-127 else 0
     component mux_zero_exp = Mux1();
-    mux_zero_exp.c[0] <== 0x00;
-    mux_zero_exp.c[1] <== exp;
+    mux_zero_exp.c[0] <== exp;
+    mux_zero_exp.c[1] <== 0x00;
     mux_zero_exp.s <== and.out;
 
     // (&A)|(&B)
@@ -87,10 +94,11 @@ template fmultiply(){
 
     // if (&A)|(&B) then 0xff else if (|A)&(|B) then A+B-127 else 0
     component mux_inf_exp = Mux1();
-    mux_inf_exp.c[0] <== 0xff;
-    mux_inf_exp.c[1] <== mux_zero_exp.out;
+    mux_inf_exp.c[0] <== mux_zero_exp.out;
+    mux_inf_exp.c[1] <== 0xff;
     mux_inf_exp.s <== or.out;
     oexp <== mux_inf_exp.out;
+    log(oexp);
 
     component of = Bits2Num(32);
     signal b[23];
@@ -134,7 +142,6 @@ template fmultiply(){
     }  
     
     fo <== f.out;
-    log(fo);
 }
 
 component main = fmultiply();
