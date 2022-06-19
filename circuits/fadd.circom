@@ -94,6 +94,18 @@ template fadd(){
     exp_mux.c[1] <== greate+1;
     exp_mux.s <== fm2bits.out[24];
     e <== exp_mux.out;
+
+    component mbits = Num2Bits(24);
+    mbits.in <== mfull;
+
+    component full = Bits2Num(23);
+    
+    var i;
+    for(i=0;i<23;i++){
+        full.in[i] <== mbits.out[i];
+    }
+
+    
 }
 
 component main = fadd();
