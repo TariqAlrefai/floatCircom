@@ -49,26 +49,51 @@ template fadd(){
     less.in[0] <== f1exp.out;
     less.in[1] <== f2exp.out;
 
-    component eq   = IsEqual(8);
+    component eq   = IsEqual();
     eq.in[0] <== f1exp.out;
     eq.in[1] <== f2exp.out;
 
-    component mmux = MultiMux1(1);
-    mmux.in[0][0] <== f1exp;
-    mmux.in[0][1] <== f2exp;
+    component mmux = MultiMux1(2);
+    mmux.c[0][0] <== f1exp.out;
+    mmux.c[0][1] <== f2exp.out;
+    mmux.c[1][0] <== f2exp.out;
+    mmux.c[1][1] <== f1exp.out;
     mmux.s <== less.out;
-    signal greate = mmux.out[0];
-    signal smalle = mmux.out[1];
+    signal greate <== mmux.out[0];
+    signal smalle <== mmux.out[1];
 
-    signal diff = greate - smalle;
+    signal diff <== greate - smalle;
 
     component mantissaSelector1 = Mux1();
-    mantissaSelector1.in[0] <== f1mant.out;
-    mantissaSelector1.in[0] <== f1mant.out;
+    mantissaSelector1.c[0] <== f1mant.out;
+    mantissaSelector1.c[1] <-- f1mant.out>>diff;
+    mantissaSelector1.s <== less.out;
+    signal m1 <== mantissaSelector1.out;
 
     component mantissaSelector2 = Mux1();
+    mantissaSelector2.c[0] <== f2mant.out;
+    mantissaSelector2.c[1] <-- f2mant.out>>diff;
+    mantissaSelector2.s <== 1-less.out;
+    signal m2 <== mantissaSelector2.out;
 
+    signal fm <== m1+m2;
 
+    component fm2bits = Num2Bits(25);
+    fm2bits.in <== fm;
 
-    
+    signal m;
+    component mant_mux = Mux1();
+    mant_mux.c[0] <== fm;
+    mant_mux.c[1] <-- fm>>1;
+    mant_mux.s <== fm2bits.out[24];
+    m <== mant_mux.out;
+
+    signal e;
+    component exp_mux = Mux1();
+    exp_mux.c[0] <== greate;
+    exp_mux.c[1] <== greate+1;
+    exp_mux.s <== fm2bits.out[24];
+    e <== exp_mux.out;
 }
+
+component main = fadd();
