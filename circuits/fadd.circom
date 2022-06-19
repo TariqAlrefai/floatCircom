@@ -1,5 +1,8 @@
 pragma circom 2.0.4;
 
+include "../node_modules/circomlib/circuits/mux1.circom";
+include "../node_modules/circomlib/circuits/comparators.circom";
+
 template fadd(){
     signal input f1;
     signal input f2;
@@ -16,28 +19,16 @@ template fadd(){
     // Extract Sign
     signal f1s <== f1b.out[31];
     signal f2s <== f2b.out[31];
-    // component xor = XOR();
-    // xor.a <== f1s;
-    // xor.b <== f2s;
-    // signal s <== xor.out;
 
     // Extract Exponent, calculate ANDs & ORs of each
     var i;
-    // component f1eAnd = MultiAND(8);
-    // component f1eOr  = MultiOR(8);
     component f1exp  = Bits2Num(8);
     for(i=0; i<8; i++){
-        // f1eAnd.in[i] <== f1b.out[23+i];
-        // f1eOr.in[i]  <== f1b.out[23+i];
         f1exp.in[i]  <== f1b.out[23+i];
     }
 
-    // component f2eAnd = MultiAND(8);
-    // component f2eOr  = MultiOR(8);
     component f2exp  = Bits2Num(8);
     for(i=0; i<8; i++){
-        // f2eAnd.in[i] <== f1b.out[23+i];
-        // f2eOr.in[i]  <== f1b.out[23+i];
         f2exp.in[i]  <== f2b.out[23+i];
     }
 
@@ -53,6 +44,31 @@ template fadd(){
     for(i=0; i<23; i++){
         f2mant.in[i] <== f2b.out[i];
     }
+
+    component less = LessThan(8);
+    less.in[0] <== f1exp.out;
+    less.in[1] <== f2exp.out;
+
+    component eq   = IsEqual(8);
+    eq.in[0] <== f1exp.out;
+    eq.in[1] <== f2exp.out;
+
+    component mmux = MultiMux1(1);
+    mmux.in[0][0] <== f1exp;
+    mmux.in[0][1] <== f2exp;
+    mmux.s <== less.out;
+    signal greate = mmux.out[0];
+    signal smalle = mmux.out[1];
+
+    signal diff = greate - smalle;
+
+    component mantissaSelector1 = Mux1();
+    mantissaSelector1.in[0] <== f1mant.out;
+    mantissaSelector1.in[0] <== f1mant.out;
+
+    component mantissaSelector2 = Mux1();
+
+
 
     
 }
