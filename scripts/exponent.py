@@ -1,4 +1,4 @@
-
+# This file generate "if"s for "i2f" circom module
 
 f = open('./exp.gen', 'w')
 

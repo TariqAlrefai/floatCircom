@@ -1,3 +1,5 @@
+# This is prototype for the algorithm, it is made in python before working on circom
+
 import struct
 
 def f2bytes(f):
@@ -53,15 +55,17 @@ def fadd(a: float, b: float):
     print(f'{hex(mam):>10}')
     print(f'{hex(mbm):>10}')
     print(f'{hex(m):>10}')
-
-    n = (m&0x7fffff) + (greate << 23)
+    if m&0x1000000 > 0:
+        n = ((m>>1)&0x7fffff) + (greate+1 << 23)
+    else: 
+        n = (m&0x7fffff) + (greate << 23)
 
     return n
 
 
     print(diff)
 
-r = fadd(19.25, 1423555.78)
+r = fadd(0.25, 580.6)
 rr = struct.unpack('f', bytearray([r&0xff, r&0xff00>>8, r&0xff0000>>16, r&0xff000000>>24]))
 print(f'{hex(r)}')
 print(rr)
