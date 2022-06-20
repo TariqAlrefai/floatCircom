@@ -61,9 +61,6 @@ template fmultiply(){
     // Multiply mantissas
     signal mant;
     mant <== f1mant.out * f2mant.out;
-    log(f1mant.out);
-    log(f2mant.out);
-    log(mant);
 
     component bits = Num2Bits(48);
     bits.in <== mant;
@@ -98,7 +95,6 @@ template fmultiply(){
     mux_inf_exp.c[1] <== 0xff;
     mux_inf_exp.s <== or.out;
     oexp <== mux_inf_exp.out;
-    log(oexp);
 
     component of = Bits2Num(32);
     signal b[23];

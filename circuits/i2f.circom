@@ -45,7 +45,6 @@ template i2f(n){
     }
 
     out <== f.out;
-    log(out);
 }
 
 component main = i2f(32);
