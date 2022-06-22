@@ -30,7 +30,7 @@ def fadd(a: float, b: float):
     bb = f2bytes(b)
 
     a_s = getSign(ab)
-    bs = getSign(bb)
+    bs  = getSign(bb)
 
     ae = getExponent(ab)
     be = getExponent(bb)
@@ -46,28 +46,34 @@ def fadd(a: float, b: float):
     mam = am >> diff if is_althb else am
     mbm = bm if is_althb else bm >> diff
 
+    is_malthb = mam < mbm
+    same_sign = a_s == bs
+    s = a_s if same_sign else bs if is_malthb else a_s
+
+
     # print("{:>60}".format(bin(am)))
     # print("{:>60}".format(bin(mam)))
     # print("{:>60}".format(bin(bm)))
     # print("{:>60}".format(bin(mbm)))
-    m = mam + mbm
+    m = (mam + mbm) if same_sign else mbm-mam if is_malthb else mam-mbm
 
-    print(f'{hex(mam):>10}')
-    print(f'{hex(mbm):>10}')
-    print(f'{hex(m):>10}')
+    # print(f'{hex(mam):>10}')
+    # print(f'{hex(mbm):>10}')
+    # print(f'{hex(m):>10}')
     if m&0x1000000 > 0:
         n = ((m>>1)&0x7fffff) + (greate+1 << 23)
     else: 
         n = (m&0x7fffff) + (greate << 23)
 
+    n = n + (s<<31)
     return n
 
 
     print(diff)
 
-r = fadd(0.25, 580.6)
-rr = struct.unpack('f', bytearray([r&0xff, r&0xff00>>8, r&0xff0000>>16, r&0xff000000>>24]))
+r = fadd(20, -5)
+rr = struct.unpack('f', bytearray([r&0xff, (r&0xff00)>>8, (r&0xff0000)>>16, (r&0xff000000)>>24]))
 print(f'{hex(r)}')
-print(rr)
+print("R = {}".format(rr[0]))
 
 

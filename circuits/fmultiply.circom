@@ -129,7 +129,7 @@ template fmultiply(){
 
     fom.in <== mux.out;
     foe.in <== oexp;
-    f.in[31] <== 0;
+    f.in[31] <== s;
     for(i=0; i<8; i++){
         f.in[23+i] <== foe.out[i];
     }  

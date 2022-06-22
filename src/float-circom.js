@@ -26,9 +26,24 @@ function Float64Bytes2Number(n){
     return c.getFloat64(0);
 }
 
+function f64tf32(n){
+    return Math.fround(n);
+}
+
+function f32Mul(a,b){
+    return f64tf32( f64tf32(a) * f64tf32(b) );
+}
+
+function f32Add(a,b){
+    return f64tf32( f64tf32(a) + f64tf32(b) );
+}
+
 module.exports = {
     Number2Float32Bytes, 
     Number2Float64Bytes, 
     Float32Bytes2Number, 
-    Float64Bytes2Number
+    Float64Bytes2Number,
+    f64tf32, 
+    f32Mul,
+    f32Add
 };

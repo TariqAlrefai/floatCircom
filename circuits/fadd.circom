@@ -68,6 +68,7 @@ template fadd(){
     mantissaSelector1.c[0] <== f1mant.out;
     mantissaSelector1.c[1] <-- f1mant.out>>diff;
     mantissaSelector1.s <== less.out;
+    
     signal m1 <== mantissaSelector1.out;
 
     component mantissaSelector2 = Mux1();
@@ -76,7 +77,17 @@ template fadd(){
     mantissaSelector2.s <== 1-less.out;
     signal m2 <== mantissaSelector2.out;
 
-    signal fm <== m1+m2;
+    component sameSign = IsEqual();
+    sameSign.in[0] <== f1s;
+    sameSign.in[1] <== f2s;
+    component singSelector = Mux1();
+    singSelector.c[0] <== m1+m2;
+    component greaterMantissaSelector = Mux1();
+    greaterMantissaSelector.c[0] <== m1-m2;
+    greaterMantissaSelector.c[1] <== m2-m1;
+    greaterMantissaSelector.s <== less.out;
+    singSelector.c[1] <== m1-m2;
+    signal fm <== ;
 
     component fm2bits = Num2Bits(25);
     fm2bits.in <== fm;
@@ -115,3 +126,11 @@ template fadd(){
 }
 
 component main = fadd();
+
+/*
+     5 +  2 =  7
+    -5 + -2 = -7
+    -5 +  2 = -3
+     5 + -2 =  3
+
+*/
