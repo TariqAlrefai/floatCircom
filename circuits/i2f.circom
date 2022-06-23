@@ -47,4 +47,4 @@ template i2f(n){
     out <== f.out;
 }
 
-component main = i2f(32);
+// component main = i2f(32);

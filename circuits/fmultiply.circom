@@ -140,4 +140,4 @@ template fmultiply(){
     fo <== f.out;
 }
 
-component main = fmultiply();
+// component main = fmultiply();
