@@ -75,8 +75,8 @@ template fmultiply(){
     
     // (|A)&(|B)
     component and = AND();
-    and.a <== f1eOr.out;
-    and.b <== f2eOr.out;
+    and.a <== 1-f1eOr.out;
+    and.b <== 1-f2eOr.out;
     
     // if (|A)&(|B) then A+B-127 else 0
     component mux_zero_exp = Mux1();

@@ -1,9 +1,9 @@
 
 const wasm_tester = require("circom_tester").wasm;
-const c_tester = require("circom_tester").c;
+// const c_tester = require("circom_tester").c;
 const assert = require("assert");
 
-const {Float32Bytes2Number, Number2Float32Bytes, f32Mul} = require("../src/float-circom.js");
+const {Float32Bytes2Number, Number2Float32Bytes, f32Mul} = require("../lib/float-circom.js");
 // const Number2Float32Bytes = require("../src/floatCircom.js");
 // import {Number2Float32Bytes, Float32Bytes2Number} from "../src/float-circom.mjs";
 
@@ -31,6 +31,8 @@ async function tester(){
             });
 
             await circuit.checkConstraints(w);
+            console.log(w);
+
             const output = w[1];
                         
             const rate = f32Mul(p1,p2)/Float32Bytes2Number(output);

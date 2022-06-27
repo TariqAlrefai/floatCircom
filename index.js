@@ -1,9 +1,13 @@
+import React from "react";
+import reactDom from "react-dom";
+import App from "./src/App"
+
 const {
     Float32Bytes2Number, 
     Float64Bytes2Number, 
     Number2Float32Bytes, 
     Number2Float64Bytes 
-} = require("./src/float-circom");
+} = require("./lib/float-circom");
 
 
 module.exports = {
@@ -12,3 +16,5 @@ module.exports = {
     Number2Float32Bytes, 
     Number2Float64Bytes 
 };
+
+reactDom.render(<App />, document.getElementById("root"));

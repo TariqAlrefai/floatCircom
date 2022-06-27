@@ -53,16 +53,9 @@ template greaterThanF(e,m){
     less.f1 <== f1;
     less.f2 <== add.fo;
 
-    r <== 1-less.out;
+    r <== 1-less.r;
 }
 
-template inRange(e,m){
-    
-}
-
-// template isEqualF(e,m){
-
-// }
 
 
 

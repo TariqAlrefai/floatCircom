@@ -3,20 +3,6 @@ pragma circom 2.0.4;
 include "../node_modules/circomlib/circuits/gates.circom";
 include "../node_modules/circomlib/circuits/bitify.circom";
 
-// template shiftRight(n){
-//     signal input in;
-//     signal input shift;
-//     signal output out;
-
-//     component bin = Num2Bits(n);
-//     bin.in <-- in>>shift;
-//     var v = in>>shift;
-//     var com = 0;
-//     var i;
-//     for(i=0; i<n; i++){
-//         com += 
-//     }
-// }
 
 template Decode(en,mn){
     signal input f;
@@ -61,7 +47,7 @@ template MultiOR(n){
         and.in[i] <== 1 - in[i];   // Negate in[i]
     }
 
-    out <== and.out;
+    out <== 1-and.out;
 }
 
 // Priority Encoder
