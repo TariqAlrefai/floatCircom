@@ -1,8 +1,5 @@
 /*
     This moduel convert any 32-bit integer to floating point number
-
-    Note: I need to add zero support to this module
-    Note: I need to add negative support to this module
 */
 
 pragma circom 2.0.4;

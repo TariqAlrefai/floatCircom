@@ -22,7 +22,11 @@ def getSign(b):
     return b>>31 & 0x01
 
 def pe(f):
-    return np.floor(np.log2(f)+1)
+    return np.ceil(np.log2(f+1))
+
+# print(getExponent(a))
+# print(getMantissa(a))
+# print(getSign(a))
 
 def fadd(a: float, b: float):
     ab = f2bytes(a)
@@ -63,12 +67,11 @@ def fadd(a: float, b: float):
     # print(f'{hex(mbm):>10}')
     # print(f'{hex(m):>10}')
     if not same_sign:
-        d = int(23-pe(m))
-        # print(f"d:{d}")
-        greate -= d
-        # n = m
-        n = ((m<<(1+d))&0x7fffff) + (greate-1 << 23)
-        # print(f"d:{d}")
+        d = 24-int(pe(m))
+        print(d)
+        m = m<<(d)
+        n = (m&0x7fffff) + ((greate-d)<<23)
+        
     elif m&0x1000000 > 0:
         n = ((m>>1)&0x7fffff) + (greate+1 << 23)
     else: 
@@ -80,7 +83,7 @@ def fadd(a: float, b: float):
 
     print(diff)
 
-r = fadd(-200, 201)
+r = fadd(-55.66, 45.36)
 rr = struct.unpack('f', bytearray([r&0xff, (r&0xff00)>>8, (r&0xff0000)>>16, (r&0xff000000)>>24]))
 print(f'{hex(r)}')
 print("R = {}".format(rr[0]))
