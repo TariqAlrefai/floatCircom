@@ -1,8 +1,5 @@
 /*
     This moduel convert any 32-bit integer to floating point number
-
-    Note: I need to add zero support to this module
-    Note: I need to add negative support to this module
 */
 
 pragma circom 2.0.4;
@@ -47,4 +44,4 @@ template i2f(n){
     out <== f.out;
 }
 
-component main = i2f(32);
+// component main = i2f(32);

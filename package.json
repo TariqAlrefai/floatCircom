@@ -1,5 +1,5 @@
 {
-  "name": "floatcircom",
+  "name": "float-circom",
   "version": "1.0.0",
   "description": "Floating point arithmetic implementation for circom",
   "main": "index.js",
@@ -7,13 +7,10 @@
     "test": "tests"
   },
   "scripts": {
+    "start": "webpack-dev-server .",
+    "build": "npm run ccompile -- add GreaterThan i2f LessThan multiply",
     "test": "npx mocha",
-    "i2fc": "bash ./scripts/compile.sh i2f",
-    "i2fr": "bash ./scripts/run.sh i2f",
-    "i2f": "npm run i2fc && npm run i2fr",
-    "fmulc": "bash ./scripts/compile.sh fmultiply",
-    "fmulr": "bash ./scripts/run.sh fmultiply",
-    "fmul": "npm run fmulc && npm run fmulr"
+    "ccompile": "bash ./scripts/compile.sh"
   },
   "repository": {
     "type": "git",
@@ -31,9 +28,9 @@
     "circomlibjs": "^0.1.2"
   },
   "devDependencies": {
+    "babel-core": "6.26.3",
     "chai": "^4.3.6",
     "mocha": "^10.0.0"
   },
-  "module": "index.js",
-  "name": "float-circom"
+  "module": "index.js"
 }

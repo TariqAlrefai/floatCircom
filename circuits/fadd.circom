@@ -2,6 +2,7 @@ pragma circom 2.0.4;
 
 include "../node_modules/circomlib/circuits/mux1.circom";
 include "../node_modules/circomlib/circuits/comparators.circom";
+include "./logic.circom";
 
 template fadd(){
     signal input f1;
@@ -19,7 +20,8 @@ template fadd(){
     // Extract Sign
     signal f1s <== f1b.out[31];
     signal f2s <== f2b.out[31];
-
+    // log(f1s);
+    // log(f2s);
     // Extract Exponent, calculate ANDs & ORs of each
     var i;
     component f1exp  = Bits2Num(8);
@@ -32,19 +34,25 @@ template fadd(){
         f2exp.in[i]  <== f2b.out[23+i];
     }
 
+    // log(f1exp.out);
+    // log(f2exp.out);
+
     // Extract Mantissa
     component f1mant = Bits2Num(24);
     f1mant.in[23] <== 1;
     for(i=0; i<23; i++){
         f1mant.in[i] <== f1b.out[i];
     }
-
+    
     component f2mant = Bits2Num(24);
     f2mant.in[23] <== 1;
     for(i=0; i<23; i++){
         f2mant.in[i] <== f2b.out[i];
     }
+    // log(f1mant.out);
+    // log(f2mant.out);
 
+    // Determine smaller and larger numbers
     component less = LessThan(8);
     less.in[0] <== f1exp.out;
     less.in[1] <== f2exp.out;
@@ -64,11 +72,11 @@ template fadd(){
 
     signal diff <== greate - smalle;
 
+    // Determine which mantissa to be used
     component mantissaSelector1 = Mux1();
     mantissaSelector1.c[0] <== f1mant.out;
     mantissaSelector1.c[1] <-- f1mant.out>>diff;
     mantissaSelector1.s <== less.out;
-    
     signal m1 <== mantissaSelector1.out;
 
     component mantissaSelector2 = Mux1();
@@ -76,19 +84,39 @@ template fadd(){
     mantissaSelector2.c[1] <-- f2mant.out>>diff;
     mantissaSelector2.s <== 1-less.out;
     signal m2 <== mantissaSelector2.out;
+    // log(m1);
+    // log(m2);
 
+    // Same sign logic
     component sameSign = IsEqual();
     sameSign.in[0] <== f1s;
     sameSign.in[1] <== f2s;
+
     component singSelector = Mux1();
-    singSelector.c[0] <== m1+m2;
+    singSelector.c[1] <== m1+m2;
+
+    component lessM = LessThan(24);
+    lessM.in[0] <== m1;
+    lessM.in[1] <== m2;
+
     component greaterMantissaSelector = Mux1();
     greaterMantissaSelector.c[0] <== m1-m2;
     greaterMantissaSelector.c[1] <== m2-m1;
-    greaterMantissaSelector.s <== less.out;
-    singSelector.c[1] <== m1-m2;
-    singSelector.s <== 1-less.out;
+
+    greaterMantissaSelector.s <== lessM.out;
+    // log(lessM.out);
+    // singSelector.c[0] <== m1-m2;
+    singSelector.c[0] <== greaterMantissaSelector.out;
+    singSelector.s <== sameSign.out;
     signal fm <== singSelector.out;
+    // log(fm);
+
+    // Preperation
+    component Pe = pe(32);
+    Pe.integer <== fm;
+    signal d <== 24-Pe.o-1;
+    log(d);
+
 
     component fm2bits = Num2Bits(25);
     fm2bits.in <== fm;
@@ -98,14 +126,25 @@ template fadd(){
     mant_mux.c[0] <== fm;
     mant_mux.c[1] <-- fm>>1;
     mant_mux.s <== fm2bits.out[24];
-    m <== mant_mux.out;
+    
+    component step2_mant_mux = Mux1();
+    step2_mant_mux.c[0] <-- fm<<(d);
+    step2_mant_mux.c[1] <== mant_mux.out;
+    step2_mant_mux.s <== sameSign.out;
+    m <== step2_mant_mux.out;
 
     signal e;
     component exp_mux = Mux1();
     exp_mux.c[0] <== greate;
     exp_mux.c[1] <== greate+1;
     exp_mux.s <== fm2bits.out[24];
-    e <== exp_mux.out;
+
+    component step2_exp_mux = Mux1();
+    log(greate);
+    step2_exp_mux.c[0] <-- greate-d;
+    step2_exp_mux.c[1] <== exp_mux.out;
+    step2_exp_mux.s <== sameSign.out;
+    e <== step2_exp_mux.out;
 
     component mbits = Num2Bits(24);
     mbits.in <== m;
@@ -121,12 +160,38 @@ template fadd(){
     for(i=0; i<8; i++){
         full.in[i+23] <== ebits.out[i];
     }
-    full.in[31] <== f1s;
 
+    // component gt = greaterThanF(8,23);
+    // gt.f1 <== f1;
+    // gt.f2 <== f2;
+    component Eeq = IsEqual();
+    Eeq.in[0] <== f1exp.out;
+    Eeq.in[1] <== f2exp.out;
+
+    component Eless = LessThan(8);
+    Eless.in[0] <== f1exp.out;
+    Eless.in[1] <== f2exp.out;
+
+    component Mless = LessThan(24);
+    Mless.in[0] <== m1;
+    Mless.in[1] <== m2;
+
+    component mux1 = Mux1();
+    mux1.c[0] <== Eless.out;
+    mux1.c[1] <== Mless.out;
+    mux1.s <== Eeq.out;
+
+    component signMux = Mux1();
+    signMux.c[0] <== f1s;
+    signMux.c[1] <== f2s;
+    signMux.s <== mux1.out;
+    full.in[31] <== signMux.out;
+
+    log(full.out);
     fo <== full.out;
 }
 
-component main = fadd();
+// component main = fadd();
 
 /*
      5 +  2 =  7
