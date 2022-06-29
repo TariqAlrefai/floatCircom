@@ -1,6 +1,7 @@
 # This is prototype for the algorithm, it is made in python before working on circom
 
 import struct
+import numpy as np
 
 def f2bytes(f):
     b = bytearray(struct.pack("f", f))
@@ -20,10 +21,8 @@ def getFullMantissa(b):
 def getSign(b):
     return b>>31 & 0x01
 
-
-# print(getExponent(a))
-# print(getMantissa(a))
-# print(getSign(a))
+def pe(f):
+    return np.floor(np.log2(f)+1)
 
 def fadd(a: float, b: float):
     ab = f2bytes(a)
@@ -57,10 +56,20 @@ def fadd(a: float, b: float):
     # print("{:>60}".format(bin(mbm)))
     m = (mam + mbm) if same_sign else mbm-mam if is_malthb else mam-mbm
 
+    print(f"mam:{hex(mam)}")
+    print(f"mbm:{hex(mbm)}")
+
     # print(f'{hex(mam):>10}')
     # print(f'{hex(mbm):>10}')
     # print(f'{hex(m):>10}')
-    if m&0x1000000 > 0:
+    if not same_sign:
+        d = int(23-pe(m))
+        # print(f"d:{d}")
+        greate -= d
+        # n = m
+        n = ((m<<(1+d))&0x7fffff) + (greate-1 << 23)
+        # print(f"d:{d}")
+    elif m&0x1000000 > 0:
         n = ((m>>1)&0x7fffff) + (greate+1 << 23)
     else: 
         n = (m&0x7fffff) + (greate << 23)
@@ -71,7 +80,7 @@ def fadd(a: float, b: float):
 
     print(diff)
 
-r = fadd(20, -5)
+r = fadd(-200, 201)
 rr = struct.unpack('f', bytearray([r&0xff, (r&0xff00)>>8, (r&0xff0000)>>16, (r&0xff000000)>>24]))
 print(f'{hex(r)}')
 print("R = {}".format(rr[0]))
