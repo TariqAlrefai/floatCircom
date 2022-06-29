@@ -19,24 +19,33 @@ include "../node_modules/circomlib/circuits/bitify.circom";
 // }
 
 template Decode(en,mn){
-    input f;
-    output s;
-    output e[en];
-    output m[mn];
+    signal input f;
+    signal output s;
+    signal output e[en];
+    signal output m[mn+1];
+    signal output exponent;
+    signal output mantissa;
 
-    component fb = Num2Bits(32);
+    component fb = Num2Bits(en+mn+1);
+    component exponentC = Bits2Num(en);
+    component mantissaC = Bits2Num(mn);
+
     fb.in <== f;
     
     var i;
-    for(i=0; i<em; i++){
+    for(i=0; i<mn; i++){
         m[i] <== fb.out[i];
+        mantissaC.in[i] <== fb.out[i];
     }
+    mantissa <== mantissaC.out;
 
     for(i=0; i<en; i++){
-        e[i] <== fb.out[em+i];
+        e[i] <== fb.out[mn+i];
+        exponentC.in[i] <== fb.out[mn+i];
     }
+    exponent <== exponentC.out;
 
-    s <== fb.out[m+e+1];
+    s <== fb.out[mn+en];
 }
 
 template MultiOR(n){

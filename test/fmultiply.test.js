@@ -114,7 +114,49 @@ async function tester(){
             const c = (new DataView(new ArrayBuffer(8)));
             c.setBigInt64(0, output);
 
-            assert.ok(Math.abs(p1+p2-c.getFloat32(4)) < 0.01);
+            const rate = (p1+p2)/Float32Bytes2Number(output);
+            assert.ok(rate > 0.999 && rate < 1.001);
+        })
+        it("0.3+0.12", async ()=>{
+            let p1 = 12.55;
+            let p2 = -54.444;
+
+            const circuit = await wasm_tester("./circuits/fadd.circom");
+            const w = await circuit.calculateWitness({
+                f1: Number2Float32Bytes(p2), 
+                f2: Number2Float32Bytes(p1)
+            });
+            await circuit.checkConstraints(w);
+            
+            const output = w[1];
+
+            const c = (new DataView(new ArrayBuffer(8)));
+            c.setBigInt64(0, output);
+
+            const rate = (p1+p2)/Float32Bytes2Number(output);
+            assert.ok(rate > 0.999 && rate < 1.001);
+        })
+        it("0.3+0.12", async ()=>{
+            let p1 = -23.32;
+            let p2 = -33.2;
+
+            const circuit = await wasm_tester("./circuits/fadd.circom");
+            const w = await circuit.calculateWitness({
+                f1: Number2Float32Bytes(p2), 
+                f2: Number2Float32Bytes(p1)
+            });
+            await circuit.checkConstraints(w);
+            
+            const output = w[1];
+
+            const c = (new DataView(new ArrayBuffer(8)));
+            c.setBigInt64(0, output);
+
+            const rate = (p1+p2)/Float32Bytes2Number(output);
+            console.log(rate);
+            console.log((p1+p2));
+            console.log(Float32Bytes2Number(output));
+            assert.ok(rate > 0.99 && rate < 1.01);
         })
     })
     

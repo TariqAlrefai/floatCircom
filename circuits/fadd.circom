@@ -87,7 +87,8 @@ template fadd(){
     greaterMantissaSelector.c[1] <== m2-m1;
     greaterMantissaSelector.s <== less.out;
     singSelector.c[1] <== m1-m2;
-    signal fm <== ;
+    singSelector.s <== 1-less.out;
+    signal fm <== singSelector.out;
 
     component fm2bits = Num2Bits(25);
     fm2bits.in <== fm;
