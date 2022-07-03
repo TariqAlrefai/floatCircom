@@ -3,6 +3,7 @@ pragma circom 2.0.4;
 include "../node_modules/circomlib/circuits/mux1.circom";
 include "../node_modules/circomlib/circuits/comparators.circom";
 include "./logic.circom";
+include "./rightShift.circom";
 
 template fadd(){
     signal input f1;
@@ -73,15 +74,23 @@ template fadd(){
     signal diff <== greate - smalle;
 
     // Determine which mantissa to be used
+    component diff1RightShift = rightShift(10000);
+    diff1RightShift.n <== f1mant.out;
+    diff1RightShift.shift <== diff;
+
     component mantissaSelector1 = Mux1();
     mantissaSelector1.c[0] <== f1mant.out;
-    mantissaSelector1.c[1] <-- f1mant.out>>diff;
+    mantissaSelector1.c[1] <== diff1RightShift.o;
     mantissaSelector1.s <== less.out;
     signal m1 <== mantissaSelector1.out;
 
+    component diff2RightShift = rightShift(10000);
+    diff2RightShift.n <== f2mant.out;
+    diff2RightShift.shift <== diff;
+
     component mantissaSelector2 = Mux1();
     mantissaSelector2.c[0] <== f2mant.out;
-    mantissaSelector2.c[1] <-- f2mant.out>>diff;
+    mantissaSelector2.c[1] <== diff2RightShift.o;
     mantissaSelector2.s <== 1-less.out;
     signal m2 <== mantissaSelector2.out;
     // log(m1);
@@ -122,13 +131,22 @@ template fadd(){
     fm2bits.in <== fm;
 
     signal m;
+    
+    component fm1RightShift = rightShift(10000);
+    fm1RightShift.n <== fm;
+    fm1RightShift.shift <== 1;
+
     component mant_mux = Mux1();
     mant_mux.c[0] <== fm;
-    mant_mux.c[1] <-- fm>>1;
+    mant_mux.c[1] <== fm1RightShift.o;
     mant_mux.s <== fm2bits.out[24];
     
-    component step2_mant_mux = Mux1();
-    step2_mant_mux.c[0] <-- fm<<(d);
+    component fm1LeftShift = leftShift(10000);
+    fm1LeftShift.n <== fm;
+    fm1LeftShift.shift <== (d);
+
+    component step2_mant_mux = Mux1();    
+    step2_mant_mux.c[0] <== fm1LeftShift.o;
     step2_mant_mux.c[1] <== mant_mux.out;
     step2_mant_mux.s <== sameSign.out;
     m <== step2_mant_mux.out;
